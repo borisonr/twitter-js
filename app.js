@@ -26,8 +26,8 @@ app.use(function (req, res, next) {
 })
 
 app.get('/', function (req, res) {
-    var people = [{name: 'Full'}, {name: 'Stacker'}, {name: 'Son'}];
-	res.render( 'index', {title: 'Hall of Fame', people: people} );
+    var people = [{name: 'Katie'}, {name: 'Rebecca'}, {name: 'Joe'}];
+	res.render( 'index', {title: 'Coders', people: people} );
 });
 
 app.get('/news', function (req, res) {
