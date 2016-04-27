@@ -6,6 +6,7 @@ var swig = require('swig');
 var app = express();
 var server = http.createServer();
 
+swig.setDefaults({ cache: false });
 
 server.on('request', app);
 
@@ -20,20 +21,17 @@ app.use('/special/', function (req, res, next) {
 })
 
 app.use(function (req, res, next) {
-	console.log(req.method, req.path, res.status().statusCode);
+	console.log(req.method, req.path);
     next();
 })
 
 app.get('/', function (req, res) {
-    res.send('hello world');
+    var people = [{name: 'Full'}, {name: 'Stacker'}, {name: 'Son'}];
+	res.render( 'index', {title: 'Hall of Fame', people: people} );
 });
 
 app.get('/news', function (req, res) {
     res.send('news');
-});
-
-swig.renderFile(__dirname + '/views/index.html', locals, function (err, output) {
-    console.log(output);
 });
 
 
