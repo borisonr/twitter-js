@@ -41,6 +41,16 @@ code {
   font-size: 80%;
 }
 
+.form {
+  padding: 7px;
+  border-style: solid;
+  border-width: thin;
+  border-color: #3e6386; 
+  background-color: #9db3c8;
+  border-radius: 5px;
+  margin: 20px 0; 
+}
+
 .tweetbox {
   padding: 7px;
   border-style: solid;

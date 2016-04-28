@@ -4,7 +4,7 @@ var _ = require('lodash');
 var data = [];
 
 function add(name, text){
-	data.unshift({name: name, text: text, id: Math.floor(Math.random()*500000).toString() });
+	data.unshift({name: name, text: text, id: data.length });
 }
 
 function list(){

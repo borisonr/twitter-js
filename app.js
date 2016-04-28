@@ -1,30 +1,25 @@
 var express = require( 'express' );
-var http = require('http');
+var bodyParser = require('body-parser');
 var fs = require('fs');
 var swig = require('swig');
 var routes = require('./routes/');
+var socketio = require('socket.io');
+var morgan = require('morgan');
 
 var app = express();
-var server = http.createServer();
+var server = app.listen(3000);
+var io = socketio.listen(server);
 
 swig.setDefaults({ cache: false });
-
-server.on('request', app);
-
 app.engine('html', swig.renderFile);
-
 app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 
 app.use(express.static(__dirname + '/public'));
 
-app.use(function (req, res, next) {
-	console.log(req.method, req.path, res.statusCode);
-    next();
-})
+app.use(morgan('dev'));
 
-app.use('/', routes);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded());
 
-server.listen(3000, function () {
-    console.log('Server listening');
-});
+app.use(routes(io));
