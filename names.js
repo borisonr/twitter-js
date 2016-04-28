@@ -9,6 +9,7 @@ var locals = {
         { name: 'Hermione'}
     ]
 };
+
 swig.renderFile(__dirname + '/views/index.html', locals, function (err, output) {
     console.log(output);
 });

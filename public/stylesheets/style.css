@@ -21,7 +21,6 @@ body {
   background-color: #f5f5f5;
 }
 
-
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
@@ -44,17 +43,28 @@ code {
 
 .tweetbox {
   padding: 7px;
+  border-style: solid;
+  border-width: thin;
+  border-color: #3e6386; 
+  background-color: #9db3c8;
+  border-radius: 5px;
+  margin: 0 0 20px; 
 }
 
 .tweetbox img {
   float: left;
   height: 48px;
   width: 48px;
-  content:url("http://lorempixel.com/48/48");
+  content:url("https://41.media.tumblr.com/e9b0322df21af89566dd756adb35b9d8/tumblr_o6co18bRPC1vsm350o1_100.jpg");
 }
 .content {
   margin-left: 60px;
 }
 .content .by {
   font-weight: bold;
+  color: #3E6386;
+}
+.by {
+  font-weight: bold;
+  margin-left: 60px;
 }
