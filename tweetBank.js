@@ -8,7 +8,7 @@ function add(name, text){
 }
 
 function list(){
-	return _cloneDeep(data);
+	return _.cloneDeep(data);
 }
 function find (properties) {
  	return _.cloneDeep(_.filter(data, properties));
@@ -32,7 +32,6 @@ var getFakeTweet = function() {
 for (var i = 0; i < 10; i++) {
   add( getFakeName(), getFakeTweet() );
 }
-
 
 
 module.exports = {add: add, list: list, find: find };
