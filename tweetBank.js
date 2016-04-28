@@ -4,7 +4,8 @@ var _ = require('lodash');
 var data = [];
 
 function add(name, text){
-	data.unshift({name: name, text: text, id: data.length });
+	data.unshift({name: name, text: text, id: data.length.toString() });
+	return _.clone(data[data.length - 1]);
 }
 
 function list(){

@@ -30,7 +30,7 @@ module.exports = function routerFunc(io){
 	  var text = req.body.text;
 	  tweetBank.add(name, text);
 	  res.redirect('/');
-	  var id = Math.floor(Math.random()*500000).toString();
+	  var id = tweetBank.data.length.toString();
 	  io.sockets.emit('new_tweet', {name: name, text: text, id: id});
 	});
 
