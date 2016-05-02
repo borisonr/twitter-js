@@ -7,6 +7,13 @@ var socketio = require('socket.io');
 var morgan = require('morgan');
 var path = require('path');
 
+var pg = require('pg');
+var conString = "postgres://localhost:5432/twitterdb";
+
+var client = new pg.Client(conString);
+client.connect();
+
+
 var app = express();
 var server = app.listen(3000);
 var io = socketio.listen(server);
@@ -23,4 +30,4 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 
-app.use(routes(io));
+app.use('/', routes(io, client));

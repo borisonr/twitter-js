@@ -1,37 +1,62 @@
 var express = require('express');
 var router = express.Router();
 // could use one line instead: var router = require('express').Router();
-var tweetBank = require('../tweetBank');
+// var tweetBank = require('../tweetBank');
 
 
 
 
-module.exports = function routerFunc(io){
+module.exports = function routerFunc(io, client){
 
 	router.get('/', function (req, res) {
-	  var tweets = tweetBank.list();
-	  res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets, showForm: true } );
+		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id', function (err, result) {
+  		var tweets = result.rows;
+	  	res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets, showForm: true } );
+	})
 	});
 
 	router.get( '/users/:name', function (req, res) {
 		var name = req.params.name;
-		var list = tweetBank.find({name: name});
+		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id WHERE users.name = $1', [name], function(err, result){
+		var list = result.rows;
 	  	res.render('index', {title: 'Tweets by '+ name, tweets:list, showForm: true, } );
+		})
 		});
 
 	router.get( '/tweets/:id', function (req, res) {
 		var id = req.params.id;
-		var list = tweetBank.find({id: id});
+		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id WHERE users.id = $1', [id], function(err, result){
+		var list = result.rows;
 	  	res.render('index', {title: 'id', tweets:list, showForm: false} );
+		})
 		});
 
 	router.post('/tweets', function(req, res) {
 	  var name = req.body.name;
 	  var text = req.body.text;
-	  tweetBank.add(name, text);
-	  res.redirect('/');
-	  var id = tweetBank.data.length.toString();
-	  io.sockets.emit('new_tweet', {name: name, text: text, id: id});
+	  client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
+	  	var userid = result.rows[0].id;
+	  	client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
+	  		client.query('SELECT * FROM tweets WHERE content = $1', [text], function(err, result){
+	  		var tweetid = result.rows[0].id;
+
+	  		//res.redirect('/');
+	    	io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid});
+	    	
+	  		})
+	  		// console.log(result);
+	  		// var id = Math.floor(Math.random()*5000).toString();
+	    // 	io.sockets.emit('new_tweet', {name: name, text: text, id: id});
+	    // 	res.redirect('/');
+	  	});
+	  });
+	  
+	  
+	  
+	  // tweetBank.add(name, text);
+	  
+	  // 
+	 
 	});
 
 return router;
