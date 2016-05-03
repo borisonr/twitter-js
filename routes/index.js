@@ -39,32 +39,53 @@ module.exports = function routerFunc(io, client){
 	  var userid;
 	  var image;
 	  client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
-	  	console.log(typeof result.rows);
 	  	if (result.rows[0]){
 	  		image = result.rows[0].pictureurl;
 	  	}
 	  	else {
-	  		console.log('everywhere');
-	  		image = 'http://i.imgur.com/Ru6KUIm.jpg';
+	  		image = 'http://i.imgur.com/uLB6B.jpg';
 	  		client.query('INSERT INTO users (name, pictureurl) VALUES ($1, $2)', [name, image],
 	  			function(err, result){});	
 	  	}
-	  	client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
+
+	  	function promisifiedQuery(query, args){
+	  	 	return new Promise(function(resolve, reject){
+				client.query(query, args, function(err, result){
+					if(err){reject(err);}
+					else{resolve(result);}
+				})
+	  		})
+	  	}
+
+	  	promisifiedQuery('SELECT * FROM users WHERE name = $1', [name])
+	  		.then(function (result) {
 	  		userid = result.rows[0].id;
-	  		client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
-	  			client.query('SELECT * FROM tweets WHERE content = $1', [text], function(err, result){
-	  				console.log(result.rows);
-	  				var tweetid = result.rows[0].id;
-	    			io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
-	    			res.redirect('/');
-	  			});
-	  		});
-	  	});
-	  });
+	  		promisifiedQuery('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text])})
+	  		.then(function (result){
+			return promisifiedQuery('SELECT * FROM tweets WHERE content = $1', [text])})
+			.then(function(result){
+			var tweetid = result.rows[0].id;
+	    	io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
+	    	res.redirect('/');});
+	  // 	client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
+	  // 		userid = result.rows[0].id;
+	  // 		client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
+	  // 			client.query('SELECT * FROM tweets WHERE content = $1', [text], function(err, result){
+	  // 				var tweetid = result.rows[0].id;
+	  //   			io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
+	  //   			res.redirect('/');
+	  // 			});
+	  // 		});
+	  // 	});
+	  // });
 	 
+	});
 	});
 
 return router;
 };
+
+
+
 
 
