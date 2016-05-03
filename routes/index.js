@@ -11,25 +11,22 @@ var router = express.Router();
 module.exports = function routerFunc(io, client){
 
 	router.get('/', function (req, res) {
-		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id', function (err, result) {
-  		var tweets = result.rows;
-	  	res.render( 'index', { title: 'Welcome to Twitter.js', tweets: tweets, showForm: true } );
+		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id ORDER BY tweets.id DESC', function (err, result) {
+	  	res.render( 'index', { title: 'Welcome to Twitter.js', tweets: result.rows, showForm: true } );
 	})
 	});
 
 	router.get( '/users/:name', function (req, res) {
 		var name = req.params.name;
 		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id WHERE users.name = $1', [name], function(err, result){
-		var list = result.rows;
-	  	res.render('index', {title: 'Tweets by '+ name, tweets:list, showForm: true, } );
+	  	res.render('index', {title: 'Tweets by '+ name, tweets:result.rows, showForm: true, } );
 		})
 		});
 
 	router.get( '/tweets/:id', function (req, res) {
 		var id = req.params.id;
 		client.query('SELECT * FROM tweets INNER JOIN users ON tweets.userid = users.id WHERE users.id = $1', [id], function(err, result){
-		var list = result.rows;
-	  	res.render('index', {title: 'id', tweets:list, showForm: false} );
+	  	res.render('index', {title: 'id', tweets:result.rows, showForm: false} );
 		})
 		});
 
