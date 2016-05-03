@@ -33,6 +33,17 @@
       	<img src={{tweet.pictureurl}}/>
       	<p class="by"><a href="/users/{{tweet.name}}">{{tweet.name}}</a></p>
         <p class="content"><a href="/tweets/{{tweet.id}}">{{tweet.content}}</a></p>
+
+      <!--   <form action="/retweeting" method="POST">
+        <input type="hidden" name="username">
+        <input type="hidden" name="tweetID" value={{tweet.id}}>
+        <input type="submit" class="retweet" value="Retweet"></form> -->
+
+        <form action="/delete" method="POST">
+        <input type="hidden" name="tweetID" value={{tweet.id}}>
+        <input type="hidden" name="_method" value=DELETE>
+        <input type="submit" class="delete" value="Delete">
+        </form>
        </div>
       {% endfor %}
       

@@ -59,14 +59,14 @@ module.exports = function routerFunc(io, client){
 
 	  	promisifiedQuery('SELECT * FROM users WHERE name = $1', [name])
 	  		.then(function (result) {
-	  		userid = result.rows[0].id;
-	  		promisifiedQuery('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text])})
+	  			userid = result.rows[0].id;
+	  			promisifiedQuery('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text])})
 	  		.then(function (result){
-			return promisifiedQuery('SELECT * FROM tweets WHERE content = $1', [text])})
+				return promisifiedQuery('SELECT * FROM tweets WHERE content = $1', [text])})
 			.then(function(result){
-			var tweetid = result.rows[0].id;
-	    	io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
-	    	res.redirect('/');});
+				var tweetid = result.rows[0].id;
+	    		io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
+	    		res.redirect('/');});
 	  // 	client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
 	  // 		userid = result.rows[0].id;
 	  // 		client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
@@ -81,6 +81,13 @@ module.exports = function routerFunc(io, client){
 	 
 	});
 	});
+
+	router.post('/delete', function(req, res){
+		client.query('DELETE FROM tweets WHERE id = $1', [+req.body.tweetID], function(err, result){
+			console.log(err, result);
+			});
+		res.redirect('/');
+	})
 
 return router;
 };
