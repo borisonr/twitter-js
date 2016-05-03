@@ -4,7 +4,9 @@ var router = express.Router();
 // var tweetBank = require('../tweetBank');
 
 
+/*
 
+*/
 
 module.exports = function routerFunc(io, client){
 
@@ -34,34 +36,35 @@ module.exports = function routerFunc(io, client){
 	router.post('/tweets', function(req, res) {
 	  var name = req.body.name;
 	  var text = req.body.text;
+	  var userid;
+	  var image;
 	  client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
-	  	var userid = result.rows[0].id;
-	  	client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
-	  		client.query('SELECT * FROM tweets WHERE content = $1', [text], function(err, result){
-	  		var tweetid = result.rows[0].id;
-
-	  		//res.redirect('/');
-	    	io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid});
-	    	
-	  		})
-	  		// console.log(result);
-	  		// var id = Math.floor(Math.random()*5000).toString();
-	    // 	io.sockets.emit('new_tweet', {name: name, text: text, id: id});
-	    // 	res.redirect('/');
+	  	console.log(typeof result.rows);
+	  	if (result.rows[0]){
+	  		image = result.rows[0].pictureurl;
+	  	}
+	  	else {
+	  		console.log('everywhere');
+	  		image = 'http://i.imgur.com/Ru6KUIm.jpg';
+	  		client.query('INSERT INTO users (name, pictureurl) VALUES ($1, $2)', [name, image],
+	  			function(err, result){});	
+	  	}
+	  	client.query('SELECT * FROM users WHERE name = $1', [name], function(err, result){
+	  		userid = result.rows[0].id;
+	  		client.query('INSERT INTO tweets (userid, content) VALUES ($1, $2)', [userid, text], function(err, result){
+	  			client.query('SELECT * FROM tweets WHERE content = $1', [text], function(err, result){
+	  				console.log(result.rows);
+	  				var tweetid = result.rows[0].id;
+	    			io.sockets.emit('new_tweet', {name: name, text: text, id: tweetid, pictureurl: image});
+	    			res.redirect('/');
+	  			});
+	  		});
 	  	});
 	  });
-	  
-	  
-	  
-	  // tweetBank.add(name, text);
-	  
-	  // 
 	 
 	});
 
 return router;
 };
-
-
 
 

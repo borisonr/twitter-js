@@ -8,7 +8,7 @@ var morgan = require('morgan');
 var path = require('path');
 
 var pg = require('pg');
-var conString = "postgres://localhost:5432/twitterdb";
+var conString = "postgres://localhost/twitterdb";
 
 var client = new pg.Client(conString);
 client.connect();
